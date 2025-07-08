@@ -5,6 +5,7 @@ WAF-SMASHER is a web-based Capture The Flag (CTF) challenge focused on exploitin
 This project is designed for educational purposes to help developers and security enthusiasts understand, identify, and mitigate SSTI vulnerabilities.
 
 ![Screenshot of WAF-SMASHER CTF](assets/P1.png)
+![Screenshot of WAF-SMASHER CTF](assets/P2.png)
 
 ## Features
 
