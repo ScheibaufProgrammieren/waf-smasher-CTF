@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stage-selector">
+    <h2>[SELECT TARGET SYSTEM]</h2>
+    <p>// Progress: {{ progress }} / {{ total_stages }} Systems Breached</p>
+    
+    <div class="stage-links">
+        {% for i in range(1, total_stages + 1) %}
+            {% if i <= progress %}
+                <a href="/stage/{{ i }}" class="completed">
+                    <span class="status">[COMPLETED]</span> System_0{{ i }}
+                </a>
+            {% elif i == progress + 1 %}
+                <a href="/stage/{{ i }}" class="unlocked">
+                    <span class="status">[ONLINE]</span> System_0{{ i }}
+                </a>
+            {% else %}
+                <a class="locked">
+                    <span class="status">[OFFLINE]</span> System_0{{ i }} // [ACCESS_DENIED]
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- The flag submission form is now correctly GONE from the homepage -->
+
+</div>
+{% endblock %}

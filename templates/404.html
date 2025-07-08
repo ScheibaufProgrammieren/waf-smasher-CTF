@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stage-view" style="text-align: center;">
+    <h2 style="font-size: 4rem; margin-bottom: 0;">404</h2>
+    <p class="console-line-error" style="font-size: 1.5rem;">[CONNECTION_LOST]</p>
+    <p>// The signal seems to have dropped. There's nothing here.</p>
+    <div id="navigation-control">
+        <a href="/" class="proceed-button">[ATTEMPT_RECONNECT]</a>
+    </div>
+</div>
+{% endblock %}

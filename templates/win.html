@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stage-view">
+    <h2>// [SYSTEM DOMINANCE] FINAL VALIDATION //</h2>
+
+    <div class="hint-box">
+        <strong>[INTEL]:</strong> You have bypassed all security systems. The final step is to prove your access by submitting the master flag you retrieved from System_04.
+    </div>
+
+    <!-- This will display the success/error message after submission -->
+    {% if message %}
+    <div class="console">
+        <p class="console-line {% if message.class == 'success' %}console-line-success{% else %}console-line-error{% endif %}">
+            {{ message.text }}
+        </p>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('win_page') }}">
+        <div class="input-group">
+            <span class="prompt">FLAG >></span>
+            <input type="text" id="flag-input" name="flag" placeholder="Enter master flag..." autocomplete="off" autofocus>
+        </div>
+        <button type="submit">[SUBMIT FLAG]</button>
+    </form>
+</div>
+{% endblock %}

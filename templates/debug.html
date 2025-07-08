@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stage-view">
+    <h2>// [HIDDEN] DEV-MODE PAYLOAD TESTER //</h2>
+    <div class="hint-box">
+        <strong>[SYSTEM_NOTE]:</strong> WAF is disabled on this endpoint. Use this tool for reconnaissance. Craft a payload here that can bypass the Stage 4 defenses.
+    </div>
+
+    <form method="GET" action="/debug">
+        <div class="input-group">
+            <span class="prompt">>></span>
+            <input type="text" id="query-input" name="query" placeholder="Enter payload to test..." autocomplete="off" autofocus value="{{ query or ''}}">
+        </div>
+        <button type="submit">[RENDER_TEST]</button>
+    </form>
+
+    {% if result %}
+    <div class="console" id="console-output">
+        <p class="console-line console-line-system">Rendered Output:</p>
+        <pre>{{ result }}</pre>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

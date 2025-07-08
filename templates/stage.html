@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stage-view">
+    <h2>// Engaging: System_{{ stage_num }} // {{ stage_info.title }}</h2>
+    <div class="hint-box">
+        <strong>[INTEL]:</strong> {{ stage_info.hint|safe }}
+    </div>
+
+    <form id="payload-form" action="/submit/{{ stage_num }}" method="POST">
+        <div class="input-group">
+            <span class="prompt">></span>
+            <input type="text" id="payload-input" name="payload" placeholder="Enter SSTI payload..." autocomplete="off" autofocus>
+        </div>
+        <button type="submit">[EXECUTE_PAYLOAD]</button>
+    </form>
+    
+    <div id="navigation-control"></div>
+
+    <div class="console" id="console-output">
+        <p class="console-line console-line-system">[SYSTEM] Awaiting command...</p>
+    </div>
+
+    <!-- ========================================================== -->
+    <!--            FINAL FLAG SUBMISSION FORM FOR STAGE 4          -->
+    <!-- ========================================================== -->
+    {% if stage_num == 4 %}
+    <div class="final-submission" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--primary-color);">
+        <h2>// [MASTER CONTROL] SUBMIT MASTER FLAG //</h2>
+        <p class="console-line-system">// Once the master flag is extracted, submit it here to claim total system control.</p>
+
+        <!-- This part shows the success/error message for the final flag -->
+        {% if final_message %}
+        <div class="console" style="margin-top:1rem; margin-bottom: 1.5rem; height: auto; border-color: var(--accent-color);">
+            <p class="console-line {% if final_message.class == 'success' %}console-line-success{% else %}console-line-error{% endif %}">
+                {{ final_message.text|safe }}
+            </p>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('stage', stage_num=4) }}" style="margin-top: 1.5rem;">
+            <div class="input-group">
+                <span class="prompt">FLAG></span>
+                <input type="text" id="flag-input" name="flag" placeholder="Null{...}" autocomplete="off" style="font-size: 1rem;">
+            </div>
+            <button type="submit" style="margin-top: 1rem;">[CLAIM_SYSTEM]</button>
+        </form>
+    </div>
+    {% endif %}
+    <!-- ========================================================== -->
+
+</div>
+
+<script>
+// The javascript is unchanged and still correct
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('payload-form');
+    const input = document.getElementById('payload-input');
+    const consoleOutput = document.getElementById('console-output');
+    const navControl = document.getElementById('navigation-control');
+    const submitButton = form.querySelector('button');
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const payload = input.value;
+        if (!payload || submitButton.disabled) return;
+        addConsoleLine(`> ${payload}`, 'user');
+        fetch(form.action + window.location.search, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ 'payload': payload })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messageClass = data.success ? 'success' : 'error';
+            addConsoleLine(data.message, messageClass);
+            if (data.success && data.unlocked) { showSuccessNavigation(data.unlocked < {{ total_stages|default(4) }} ); }
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            addConsoleLine('>> [CONNECTION_ERROR] Target system unresponsive.', 'error');
+        });
+        input.value = '';
+    });
+    function showSuccessNavigation(isLastStage) {
+        input.disabled = true;
+        submitButton.disabled = true;
+        submitButton.textContent = '[CONNECTION_SEVERED]';
+        const proceedLink = document.createElement('a');
+        if (isLastStage) {
+             proceedLink.href = '/';
+             proceedLink.textContent = '[RETURN_TO_HQ]';
+        } else {
+             // For the final stage, guide them to submit the flag below.
+             proceedLink.href = '#';
+             proceedLink.textContent = '[PROCEED_TO_FLAG_SUBMISSION]';
+             proceedLink.onclick = (e) => { e.preventDefault(); document.getElementById('flag-input').focus(); };
+        }
+        proceedLink.className = 'proceed-button';
+        navControl.appendChild(proceedLink);
+    }
+    function addConsoleLine(text, type) {
+        const line = document.createElement('p');
+        line.className = `console-line console-line-${type}`;
+        let i = 0;
+        line.innerHTML = '';
+        consoleOutput.appendChild(line);
+        function typeWriter() {
+            if (i < text.length) {
+                const char = text.substr(i, 4) === '<br>' ? '<br>' : text.charAt(i);
+                line.innerHTML += char;
+                i += char.length;
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                setTimeout(typeWriter, 10);
+            }
+        }
+        typeWriter();
+    }
+});
+</script>
+{% endblock %}
