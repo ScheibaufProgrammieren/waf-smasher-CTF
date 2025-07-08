@@ -53,7 +53,10 @@ def waf_stage4(payload: str) -> bool:
 def validate_stage1(payload: str):
     """Stage 1: Basic Template Execution"""
     is_correct = payload.strip() == "{{7*7}}"
-    message = "Access Granted. Calculation correct. Target system is vulnerable to basic expressions."
+    if is_correct:
+        message = "Access Granted. Calculation correct. Target system is vulnerable to basic expressions."
+    else:
+        message = "Access Denied. Incorrect calculation."
     return is_correct, message
 
 def validate_stage2(payload: str):
